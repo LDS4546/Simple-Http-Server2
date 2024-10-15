@@ -45,5 +45,54 @@ public class HttpJob implements Executable {
         //<html><body><h1>thread-2:hello java</h1></body>
         //....
 
+        while(true) {
+
+
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+            ) {
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while(true){
+                    line = br.readLine();
+                    sb.append(line);
+                    log.debug("{}", line);
+
+                    if(line == null || line.isBlank()){
+                        break;
+                    }
+                }
+
+
+
+
+                StringBuilder responsebody = new StringBuilder();
+                responsebody.append(String.format("<html><body><h1>%s:hello java</h1></body>", Thread.currentThread().getName()));
+
+
+                StringBuilder responseHeader = new StringBuilder();
+
+                responseHeader.append("HTTP/1.0 200 0K\r\n");
+                responseHeader.append(String.format("Server: HTTP server/0.1%s", System.lineSeparator()));
+                responseHeader.append(String.format("Content-type: text/html; charset=UTF-8%s", System.lineSeparator()));
+                responseHeader.append(String.format("Connection: Closed%s", System.lineSeparator()));
+                responseHeader.append(String.format("Content-Length: %d%s", responsebody.length(), System.lineSeparator()));
+
+                bw.write(responseHeader.toString() + System.lineSeparator());
+                bw.write(responsebody.toString());
+                bw.flush();
+
+                log.debug("header:{}", responseHeader);
+                log.debug("body:{}", responsebody);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }finally {
+                try {
+                    client.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 }
