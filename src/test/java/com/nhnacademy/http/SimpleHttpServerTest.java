@@ -52,6 +52,7 @@ class SimpleHttpServerTest {
         log.debug("response:{}",response.body());
 
         //TODO#105 threadB 문자열이 포함되었는지 검증 합니다.
+        Assertions.assertTrue(response.body().contains("threadB"));
 
     }
 
@@ -68,6 +69,7 @@ class SimpleHttpServerTest {
         log.debug("response:{}",response.body());
 
         //TODO#106 threadA 문자열이 포함되었는지 검증 합니다.
+        Assertions.assertTrue(response.body().contains("threadA"));
 
     }
 
