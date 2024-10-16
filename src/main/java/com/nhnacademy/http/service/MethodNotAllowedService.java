@@ -32,17 +32,26 @@ public class MethodNotAllowedService implements HttpService{
 
     @Override
     public void service(HttpRequest httpRequest, HttpResponse httpResponse) {
-        //Body-설정
-        String responseBody = null;
 
+
+        String responseBody = null;
+        try {
+            responseBody = ResponseUtils.tryGetBodyFromFile("/405.html");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         //Header-설정
-        String responseHeader = null;
 
-        //PrintWriter 응답
-        try(PrintWriter bufferedWriter = null;){
+        String responseHeader =ResponseUtils.createResponseHeader(405,"UTF-8",responseBody.length());
 
-        } catch (Exception e) {
+
+        try(PrintWriter bufferedWriter = httpResponse.getWriter();){
+            bufferedWriter.write(responseHeader);
+            bufferedWriter.write(responseBody);
+            bufferedWriter.flush();
+            log.debug("body:{}",responseBody.toString());
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

@@ -31,16 +31,22 @@ public class IndexHttpService implements HttpService{
 
         //Body-설정
         String responseBody = null;
-        
-        //Header-설정
-        String responseHeader = null;
+        try {
+            responseBody = ResponseUtils.tryGetBodyFromFile(httpRequest.getRequestURI());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
 
-        //PrintWriter 응답
-        try(PrintWriter bufferedWriter = null){
+        String responseHeader = ResponseUtils.createResponseHeader(200,"UTF-8",responseBody.length());
 
 
-        } catch (Exception e) {
+        try(PrintWriter bufferedWriter = httpResponse.getWriter();){
+            bufferedWriter.write(responseHeader);
+            bufferedWriter.write(responseBody);
+            bufferedWriter.flush();
+            log.debug("body:{}",responseBody.toString());
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 

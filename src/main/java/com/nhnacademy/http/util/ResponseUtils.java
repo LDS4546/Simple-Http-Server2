@@ -12,10 +12,13 @@
 
 package com.nhnacademy.http.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.*;
 import java.net.URL;
 import java.util.Objects;
 
+@Slf4j
 public class ResponseUtils {
     public static final String DEFAULT_404 = "/404.html";
     public static final String DEFAULT_405 = "/405.html";
@@ -81,7 +84,7 @@ public class ResponseUtils {
         /*  tryGetBodyFromFile 구현 합니다.
          * ex) filePath = /index.html -> /resources/index.html 파일을 읽어서 반환 합니다.
          * */
-
+        log.debug("Trying to read file from path: {}", filePath);
         StringBuilder responseBody = new StringBuilder();
         try(InputStream inputStream = ResponseUtils.class.getResourceAsStream(filePath);
             BufferedReader reader =  new BufferedReader(new InputStreamReader(inputStream,"UTF-8"))){
