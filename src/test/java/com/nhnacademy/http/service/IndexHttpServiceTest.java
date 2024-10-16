@@ -75,6 +75,12 @@ class IndexHttpServiceTest {
         log.debug("response:{}",response);
         //TODO#101- response 검증, httpStatuscode: 200, description: OK 검증 합니다.
         Assertions.assertAll(
+                ()->{
+                    Assertions.assertTrue(response.contains("200"));
+                },
+                ()->{
+                    Assertions.assertTrue(response.contains("OK"));
+                }
 
         );
     }

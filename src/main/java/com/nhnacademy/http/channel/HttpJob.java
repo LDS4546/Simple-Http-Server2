@@ -58,13 +58,30 @@ public class HttpJob implements Executable {
             - ex2) /index.html -> IndexHttpService 객체를 httpService에 할당 합니다.
             - ex3) /info.html -> InfoHttpService 객체를 httpService에 할당 합니다.
         */
+        if (httpRequest.getRequestURI().equals("/index.html")) {
+            httpService = new IndexHttpService();
+        }else if(httpRequest.getRequestURI().equals("/info.html")){
+            httpService = new InfoHttpService();
+        }else if(!(ResponseUtils.isExist(httpRequest.getRequestURI())) || httpRequest.getRequestURI().equals("/404.html")){
+            httpService = new NotFoundHttpService();
+        }
+
 
 
         //TODO#7 httpService.service() 호출 합니다. 호출시 예외 Method Not Allowd 관련 Exception이 발생하면 httpService에 MethodNotAllowdService 객체를 생성해서 할당 합니다.
 
-
+        try {
+            httpService.service(httpRequest, httpResponse);
+        }catch (RuntimeException e){
+            httpService = new MethodNotAllowedService();
+            httpService.service(httpRequest, httpResponse);
+        }
         //TODO#8 client 연결을 종료 합니다.
-
+        try {
+            client.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 }
