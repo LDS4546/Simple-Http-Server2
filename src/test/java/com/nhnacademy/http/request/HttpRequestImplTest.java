@@ -62,6 +62,7 @@ class HttpRequestImplTest {
     @DisplayName("getMethod() = GET")
     void getMethod() {
         //TODO#101 request method를 검증 합니다.
+        Assertions.assertEquals("GET", request.getMethod());
 
     }
 

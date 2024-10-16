@@ -12,6 +12,7 @@
 
 package com.nhnacademy.http.response;
 
+import com.nhnacademy.http.channel.HttpJob;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,7 +37,9 @@ class HttpResponseImplTest {
     @DisplayName("Socket is null")
     void constructor(){
         //TODO#106 socket null check, IllegalArgumentException이 발생 하는지 검증 합니다.
-
+        Assertions.assertThrows(IllegalArgumentException.class, ()->{
+            new HttpJob(null);
+        });
     }
 
     @Test
