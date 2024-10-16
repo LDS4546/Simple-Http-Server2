@@ -30,9 +30,11 @@ public class ApplicationContext  implements Context {
 
     @Override
     public void setAttribute(String name, Object object) {
-        if(Objects.isNull(name) || name.length()==0){
+        if(Objects.isNull(name) || name.length()==0 || Objects.isNull(object)){
             throw new IllegalArgumentException(name);
         }
+
+
         objectMap.put(name,object);
     }
 

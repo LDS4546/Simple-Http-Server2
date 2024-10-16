@@ -19,9 +19,7 @@ import com.nhnacademy.http.request.HttpRequest;
 import com.nhnacademy.http.request.HttpRequestImpl;
 import com.nhnacademy.http.response.HttpResponse;
 import com.nhnacademy.http.response.HttpResponseImpl;
-import com.nhnacademy.http.service.HttpService;
-import com.nhnacademy.http.service.IndexHttpService;
-import com.nhnacademy.http.service.InfoHttpService;
+import com.nhnacademy.http.service.*;
 import com.nhnacademy.http.util.ResponseUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -60,11 +58,25 @@ public class HttpJob implements Executable {
 
         //TODO#7 requestURI()을 이용해서 Context에 등록된 HttpService를 실행 합니다.
         //404에 대해서 대응할 수 있도록 코드를 작성 합니다.
+        if(!ResponseUtils.isExist(httpRequest.getRequestURI())) {
+            httpService = new NotFoundHttpService();
+        }
+
+        if(httpRequest.getRequestURI().equals("/index.html")) {
+            httpService = new IndexHttpService();
+        } else if(httpRequest.getRequestURI().equals("/info.html")) {
+            httpService = new InfoHttpService();
+        }
 
 
         //TODO#8 httpService.service() 호출 합니다. 호출시 예외 Method Not Allowd 관련 Exception이 발생하면 httpService에 MethodNotAllowdService 객채의 service() method를 호출 합니다.
         //405에 대응할 수 있도록 코드를 작성 합니다.
-
+        try {
+            httpService.service(httpRequest, httpResponse);
+        } catch (RuntimeException e) {
+            httpService = new MethodNotAllowedService();
+            httpService.service(httpRequest, httpResponse);
+        }
 
         try {
             if(Objects.nonNull(client) && client.isConnected()) {
