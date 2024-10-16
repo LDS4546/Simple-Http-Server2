@@ -35,14 +35,16 @@ class ResponseUtilsTest {
     @DisplayName("isExist:/")
     void isExist2() {
         //TODO#108 uri:"/" false를 반환하는지 검증 합니다.
-
+        boolean actual = ResponseUtils.isExist(("/"));
+        Assertions.assertTrue(!actual);
     }
 
     @Test
     @DisplayName("isExist:/favicon.ico")
     void isExist3() {
         //TODO#109 uri:/favicon.ico 이면 false를 반환하는지 검증 합니다.
-
+        boolean actual = ResponseUtils.isExist(("/favicon.ico"));
+        Assertions.assertTrue(!actual);
     }
 
     @Test
@@ -73,7 +75,9 @@ class ResponseUtilsTest {
 
         //TODO#110 actual (responseHeader)의 statusCode(200), description(OK) 포함되었는지 검증 합니다.
         Assertions.assertAll(
-
+                ()->{Assertions.assertTrue(actual.contains("200"));
+                },
+                ()->{Assertions.assertTrue(actual.contains("OK"));}
         );
     }
 
@@ -85,6 +89,12 @@ class ResponseUtilsTest {
 
         //TODO#111 actual (responseHeader)의 statusCode(400), description(Not Found) 포함되었는지 검증 합니다.
         Assertions.assertAll(
+                ()->{
+                    Assertions.assertTrue(actual.contains("404"));
+                },
+                ()->{
+                    Assertions.assertTrue(actual.contains("Not Found"));
+                }
 
         );
     }

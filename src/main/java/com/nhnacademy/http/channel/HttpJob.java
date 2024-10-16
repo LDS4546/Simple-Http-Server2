@@ -36,9 +36,12 @@ public class HttpJob implements Executable {
             httpRequest, httpResponse, client 초기화 합니다.
          */
 
-        this.httpRequest = null;
-        this.httpResponse = null;
-        this.client = null;
+        if(Objects.isNull(client)){
+            throw new IllegalArgumentException("Client is Null !");
+        }
+        this.httpRequest = new HttpRequestImpl(client);
+        this.httpResponse = new HttpResponseImpl(client);
+        this.client = client;
     }
 
     public HttpRequest getHttpRequest() {
@@ -63,22 +66,44 @@ public class HttpJob implements Executable {
         */
         if(!ResponseUtils.isExist(httpRequest.getRequestURI())){
             //404 - not -found
-            responseBody = null;
-            responseHeader = null;
+            try {
+                responseBody = ResponseUtils.tryGetBodyFromFile("/404.html");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            responseHeader = ResponseUtils.createResponseHeader(200,"UTF-8", responseBody.length());
         }else{
             //파일이 존재 한다면..
             /*TODO#8 responseBody에 응답할 html 파일을 읽습니다.
               - ResponseUtils.tryGetBodyFromFile(httpRequest.getRequestURI()) 이용하여 구현 합니다.
             */
 
-            responseBody = null;
-            responseHeader = null;
+            try {
+                responseBody = ResponseUtils.tryGetBodyFromFile(httpRequest.getRequestURI());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            responseHeader = ResponseUtils.createResponseHeader(200,"UTF-8", responseBody.length());
         }
 
         //TODO#12 BufferWriter를 사용 하여 responseHeader, responseBody를 client에게 응답 합니다.
-        BufferedWriter bufferedWriter = null;
+        try {
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+
+            bufferedWriter.write(responseHeader);
+            bufferedWriter.write(responseBody);
+            bufferedWriter.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
 
         //TODO#13 client에게 응답 후 cleint와 연결을 종료 합니다.
-
+        try {
+            client.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
