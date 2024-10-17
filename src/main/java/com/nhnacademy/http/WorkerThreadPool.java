@@ -15,6 +15,8 @@ package com.nhnacademy.http;
 import com.nhnacademy.http.channel.RequestChannel;
 
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class WorkerThreadPool {
     private final int poolSize;
@@ -61,6 +63,13 @@ public class WorkerThreadPool {
             thread.start();
         }
 
+        /* 밑에 3줄로 구현가눙
+        ExecutorService service = Executors.newFixedThreadPool(5);
+        HttpRequestHandler httpRequestHandler = new HttpRequestHandler(this.requestChannel);
+        service.execute(httpRequestHandler);
+
+
+         */
     }
 
     public synchronized void stop(){
